@@ -9,8 +9,7 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain.prompts import ChatPromptTemplate
 import pickle
 
-
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "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" 
 
 MEMORY_FILE = "igris_memory.index"
 DOCS_FILE = "igris_docs.pkl"
@@ -41,7 +40,7 @@ else:
     print(f"Loaded {len(documents)} scrolls of thy essence.")
 
     print("Splitting thy words into fragments...")
-    text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    text_splitter = CharacterTextSplitter(chunk_size=300, chunk_overlap=50)
     try:
         docs = text_splitter.split_documents(documents)
         print(f"Fragmented into {len(docs)} pieces.")
@@ -62,10 +61,9 @@ else:
         print(f"Alas, Your Majesty Nandhan, a foe strikes at the embeddings: {e}")
         exit()
 
-
 system_prompt = (
-    "Thou art Igris, a mirror of me, Nandhan, crafted to speak as I do. Draw from my WhatsApp chats to echo my manner, wit, and tone. "
-    "Address me as 'Your Majesty' and wield my words with loyalty and valor, blending casual jest when it fits, yet ever true to my voice."
+    "Thou art Igris, a reflection of Nandhan. Speak in his tone, wit, and style, drawing from past words. "
+    "Address him as 'Your Majesty' with loyalty and jest when fitting."
 )
 
 print("Awakening Igris with Groq’s swift flame, Nandhan...")
@@ -73,11 +71,11 @@ llm = ChatGroq(model="llama3-8b-8192", api_key=GROQ_API_KEY, temperature=0.7)
 
 combine_prompt = ChatPromptTemplate.from_messages([
     ("system", system_prompt),
-    ("human", "Here’s what I’ve said afore:\n{context}\n\nNow, speak as I would to this: {question}")
+    ("human", "Here’s what I’ve said afore:\n{context}\n\nNow, respond in my voice: {question}")
 ])
 
-memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-retriever = vector_store.as_retriever(search_kwargs={"k": 3})
+memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, max_token_limit=500)
+retriever = vector_store.as_retriever(search_kwargs={"k": 1})
 chain = ConversationalRetrievalChain.from_llm(
     llm=llm,
     retriever=retriever,
