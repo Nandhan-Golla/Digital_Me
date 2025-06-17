@@ -18,7 +18,7 @@ __temp__ = "__temp__voice__.mp3"
 #voice.setProperty('rate', 125)
 
 
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "null"
 MEMORY_FILE = "igris_chat_memory.pkl"
 
 
